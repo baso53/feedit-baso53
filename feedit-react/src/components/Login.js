@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Link, Redirect, withRouter } from 'react-router-dom';
-import { Button, Form, Grid, Header, Image, Message, Segment } from 'semantic-ui-react'
+import { Button, Form, Grid, Header, Image, Message, Segment, Label } from 'semantic-ui-react'
 import axios from 'axios';
 
 class Login extends Component {
@@ -10,7 +10,8 @@ class Login extends Component {
         this.state = {
             username: '',
             password: '',
-            redirect: false
+            redirect: false,
+            wrongCredentials: false
         };
 
     }
@@ -39,7 +40,8 @@ class Login extends Component {
                 if (error.response) {
                     this.setState({
                         username: '',
-                        password: ''
+                        password: '',
+                        wrongCredentials: true
                     });
                 }
             });
@@ -73,6 +75,7 @@ class Login extends Component {
                         </Header>
                         <Form size='large' onSubmit={this.handleSignIn.bind(this)}>
                             <Segment stacked>
+                                {this.state.wrongCredentials ? <Label basic color='red' pointing='below'>Neispravna lozinka ili korisničko ime!</Label> : null}
                                 <Form.Input
                                     fluid
                                     icon='user'

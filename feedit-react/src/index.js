@@ -30,9 +30,9 @@ ReactDOM.render((
     <BrowserRouter>
         <div>
             <Switch>
-                <Route exact path='/' component={App} />
-                <Route exact path='/login' component={Login} />
                 <PrivateRoute exact path="/home" component={Home} />
+                <Route exact path='/login' component={Login} />
+                <Route path='/' component={App} />
             </Switch>
         </div>
     </BrowserRouter>

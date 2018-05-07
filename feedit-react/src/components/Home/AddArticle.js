@@ -9,18 +9,29 @@ class AddArticle extends Component {
         super(props);
 
         this.state = {
+            votes: 0,
+            username: props.username,
             title: '',
             link: '',
             author: ''
         };
+
+
     }
 
-    handleSubmit(){
+    validateForm() {
+        return this.state.username.length > 0;
+    }
+
+    handleChange = (event, { name, value }) => this.setState({ [name]: value });
+
+    handleSubmit() {
 
     }
 
     render() {
 
+        console.log(this.state)
 
         return (
             <Container>
@@ -29,47 +40,51 @@ class AddArticle extends Component {
                     <Segment stacked>
                         <Form.Input
                             fluid
-                            placeholder='Username'
-                            value={this.state.username}
-                            name='username'
-                            onChange={this.handleChange.bind(this)}
+                            disabled
+                            value={0}
+                            name='votes'
+                            label='Vote #'
                         />
                         <Form.Input
                             fluid
-                            icon='lock'
-                            iconPosition='left'
-                            placeholder='Password'
-                            type='password'
-                            value={this.state.password}
-                            name='password'
-                            onChange={this.handleChange.bind(this)}
+                            value={this.state.username}
+                            disabled
+                            name='username'
+                            label='Username'
                         />
+                        <Form.Input
+                            fluid
+                            placeholder='Title'
+                            value={this.state.title}
+                            name='title'
+                            onChange={this.handleChange.bind(this)}
+                            label='Title'
+                        />
+                        <Form.Input
+                            fluid
+                            placeholder='Link'
+                            value={this.state.link}
+                            name='link'
+                            onChange={this.handleChange.bind(this)}
+                            label='Link'
+                        />
+                        <Form.Input
+                            fluid
+                            placeholder='Author'
+                            value={this.state.author}
+                            name='author'
+                            onChange={this.handleChange.bind(this)}
+                            label='Author'
+                        />
+                        
 
-                        <Button color='teal' fluid size='large' disabled={!this.validateForm()}>Login</Button>
+                        <Button color='teal' size='large'>Publish</Button>
+                        <Button size='large'>Cancel</Button>
                     </Segment>
                 </Form>
             </Container>
         )
     }
 }
-{/* <div>
-    <form onSubmit={this.handlePublish.bind(this)}>
-        <label htmlFor="votes">Vote #:</label>
-        <input type="text" name="votes" id="votes" disabled value={0} />
-
-        <label htmlFor="user">By User:</label>
-        <input type="text" name="user" id="user" disabled value={this.props.username}/>
-
-        <label htmlFor="headline">Headline:</label>
-        <input type="text" name="headline" id="headline"/>
-
-        <label htmlFor="link">Link:</label>
-        <input type="text" name="link" id="link"/>
-
-        <label htmlFor="author">Author:</label>
-        <input type="text" name="author" id="author"/>
-
-    </form>
-</div> */}
 
 export default AddArticle;
