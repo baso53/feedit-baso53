@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
-import { Route, Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
-import { Container, Header, Form, Segment, Button } from 'semantic-ui-react';
-
+import { Container, Header, Form, Segment, Button, Label } from 'semantic-ui-react';
 
 class AddArticle extends Component {
     constructor(props) {
@@ -11,31 +9,80 @@ class AddArticle extends Component {
         this.state = {
             votes: 0,
             username: props.username,
+            userId: props.userId,
             title: '',
             link: '',
-            author: ''
+            author: '',
+            error: ''
         };
-
-
     }
 
-    validateForm() {
-        return this.state.username.length > 0;
-    }
+    messages = {
+        emptyAuthor: "Please enter an author!",
+        emptyTitle: "Please enter a title!",
+        emptyLink: "Please enter a link!",
+        wrongLink: "Entered link doesn't exist!"
+    };
 
     handleChange = (event, { name, value }) => this.setState({ [name]: value });
 
     handleSubmit() {
+        if (this.state.title.length === 0) {
+            this.setState({
+                error: 'emptyTitle'
+            });
 
+            return;
+        } else if (this.state.author.length === 0) {
+            this.setState({
+                error: 'emptyAuthor'
+            });
+
+            return;
+        } else if (this.state.link.length === 0) {
+            this.setState({
+                error: 'emptyLink'
+            });
+
+            return;
+        } else {
+            let link = this.state.link;
+            if (this.state.link.indexOf('http://') === -1
+                && this.state.link.indexOf('https://') === -1) {
+                link = 'http://' + this.state.link;
+            }
+
+            fetch(link, {
+                mode: 'no-cors'
+            }).then(response => {
+                axios.post('/api/articles', {
+                    title: this.state.title,
+                    link: link,
+                    author: this.state.author,
+                    usernameid: this.state.userId
+                }).then(response => {
+                    this.props.fromAddArticle(true);
+                });
+            })
+            .catch(error => {
+                this.setState({
+                    error: 'wrongLink'
+                });
+            });
+        }
+    }
+
+    handleCancel(event) {
+        event.preventDefault();
+        this.props.fromAddArticle();
     }
 
     render() {
 
-        console.log(this.state)
-
         return (
             <Container>
                 <Header as='h1' textAlign='center'>Add a new article</Header>
+                {this.state.error ? <Label basic color='red' pointing='below'>{this.messages[this.state.error]}</Label> : null}
                 <Form size='large' onSubmit={this.handleSubmit.bind(this)}>
                     <Segment stacked>
                         <Form.Input
@@ -76,10 +123,10 @@ class AddArticle extends Component {
                             onChange={this.handleChange.bind(this)}
                             label='Author'
                         />
-                        
+
 
                         <Button color='teal' size='large'>Publish</Button>
-                        <Button size='large'>Cancel</Button>
+                        <Button size='large' onClick={this.handleCancel.bind(this)}>Cancel</Button>
                     </Segment>
                 </Form>
             </Container>

@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
-import Login from './components/Login';
-import Home from './components/Home/Home';
+import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 
@@ -45,12 +43,5 @@ class App extends Component {
 		}
 	}
 }
-
-/* return (
-	<Switch>
-		<Route exact path='/' render={() => <Login authenticate={this.authenticate.bind(this)} />} />
-		<Route path='/home' render={() => <Home signOut={this.signOut.bind(this)} />} />
-	</Switch>
-);  */
 
 export default App;

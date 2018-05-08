@@ -3,9 +3,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import App from './App';
-import Login from './components/Login'
-import Home from './components/Home/Home'
-import AddArticle from './components/Home/AddArticle';
+import Login from './components/Login';
+import Home from './components/Home/Home';
 import registerServiceWorker from './registerServiceWorker';
 
 const PrivateRoute = ({ component: Component, ...rest }) => (

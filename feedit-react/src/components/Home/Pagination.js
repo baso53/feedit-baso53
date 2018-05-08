@@ -1,11 +1,7 @@
 import React, { Component } from 'react';
-import { Item, Icon, Grid, Button, Dropdown } from 'semantic-ui-react';
+import { Icon, Grid, Button, Dropdown } from 'semantic-ui-react';
 
 class Pagination extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     selectionOptions = [
         {
             key: 10,
@@ -30,7 +26,7 @@ class Pagination extends Component {
 
     render() {
         return (
-            <Grid columns={4} textAlign='center' divided>
+            <Grid columns={4} textAlign='center'>
                 <Grid.Column as='a'>
                     <Icon name='arrow left' size='big' link onClick={this.props.changePagePrevious}/>
                 </Grid.Column>

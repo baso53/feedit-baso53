@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { Route, Link, Redirect, withRouter } from 'react-router-dom';
-import { Menu, Container, Item, Button, Dropdown, Input } from 'semantic-ui-react';
+import { Redirect, withRouter } from 'react-router-dom';
+import { Menu, Container, Button } from 'semantic-ui-react';
 import axios from 'axios';
-import Header from './Header';
 import ArticleList from './ArticleList';
 import AddArticle from './AddArticle';
-
+import MyArticleList from './MyArticleList';
 
 
 class Home extends Component {
@@ -16,7 +15,9 @@ class Home extends Component {
             loggedIn: false,
             username: null,
             userId: null,
-            redirect: ''
+            redirect: '',
+            forDeletion: new Set(),
+            error: ''
         };
 
         axios.get('/api/currentuser')
@@ -50,14 +51,49 @@ class Home extends Component {
             });
     }
 
-    handleRedirectToMyArticles(){
-
+    handleRedirectToMyArticles() {
+        if (this.state.redirect === 'myArticles') {
+            this.setState({
+                redirect: ''
+            });
+        } else {
+            this.setState({
+                redirect: 'myArticles'
+            });
+        }
     }
 
-    handleRedirectToAddArticle(){
+    fromAddArticle(success) {
+        this.setState({
+            redirect: ''
+        });
+    }
+
+    handleRedirectToAddArticle() {
         this.setState({
             redirect: 'addArticle'
         });
+    }
+
+    handleDeleteArticles() {
+        this.state.forDeletion.forEach(articleId => {
+            axios.delete('api/articles/' + articleId)
+            .then(response => this.setState({
+                redirect: ''
+            }))
+            .catch(error => this.setState({
+                error: error
+            }));
+        });
+
+    }
+
+    changeSelected(articleId) {
+        if (this.state.forDeletion.has(articleId)) {
+            this.state.forDeletion.delete(articleId);
+        } else {
+            this.state.forDeletion.add(articleId);
+        }
     }
 
     render() {
@@ -67,7 +103,6 @@ class Home extends Component {
 
         return (
             <div>
-                <Header />
                 <Menu fixed='top'>
                     <Container>
                         <Menu.Item as='a' onClick={this.handleRedirectToMyArticles.bind(this)}>
@@ -80,9 +115,18 @@ class Home extends Component {
                 </Menu>
 
                 <Container text style={{ marginTop: '6em' }}>
-                    <Button style={{ marginBottom: '2em' }}onClick={this.handleRedirectToAddArticle.bind(this)}>Add a new article</Button>
-                    
-                    {this.state.redirect === 'addArticle' ? <AddArticle /> : <ArticleList /> }
+                    {this.state.redirect === 'myArticles' ?
+                        <Button style={{ marginBottom: '2em' }} onClick={this.handleDeleteArticles.bind(this)}>Delete selected</Button> :
+                        <Button style={{ marginBottom: '2em' }} onClick={this.handleRedirectToAddArticle.bind(this)}>Add a new article</Button>
+                    }
+                    {this.state.redirect === 'addArticle'
+                        ? <AddArticle
+                            username={this.state.username}
+                            userId={this.state.userId}
+                            fromAddArticle={this.fromAddArticle.bind(this)} />
+                        : this.state.redirect === 'myArticles' ? <MyArticleList userId={this.state.userId} changeSelected={this.changeSelected.bind(this)} /> :
+                            <ArticleList />}
+
                 </Container>
 
             </div>
@@ -90,4 +134,4 @@ class Home extends Component {
     }
 }
 
-export default Home;
+export default withRouter(Home);

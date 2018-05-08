@@ -1,30 +1,54 @@
 import React, { Component } from 'react';
-import { Route, Link, Redirect } from 'react-router-dom';
-import { Container, Item, Image, Icon } from 'semantic-ui-react';
+import { Item, Icon, Checkbox } from 'semantic-ui-react';
 import Votes from './Votes';
+import axios from 'axios';
+
 
 class Article extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            voted: props.voted,
+            message: ''
+        }
     }
 
     vote(type) {
-
+        if (this.props.voted !== type) {
+            let numberOfVotes = type === 'up' ? this.props.voted ? 2 : 1 : this.props.voted ? -2 : -1;
+            axios.patch('/api/articles/' + this.props.articleid,
+                {
+                    votes: this.props.votes + numberOfVotes,
+                    voted: type
+                })
+                .then(response => {
+                    if (response.status === 200) {
+                        this.props.getArticlesVanilla();
+                    }
+                }).catch(error => {
+                    this.setState({
+                        message: "Could't make a vote!"
+                    });
+                });
+        }
     }
 
     didVote(type) {
         if (this.props.voted) {
-            return this.props.voted === 'up' ? true : false;
+            return this.props.voted === type;
         } else {
             return false;
         }
     }
 
+    handleSelected(event, data) {
+        this.props.changeSelected(this.props.articleid);
+    }
+
     render() {
         return (
             <Item>
-
                 <Votes number={this.props.votes} />
 
                 <Item.Content>
@@ -32,8 +56,13 @@ class Article extends Component {
                     <Item.Meta>by {this.props.author}</Item.Meta>
                 </Item.Content>
 
-                <Icon link name='arrow up' size='large' onClick={this.vote.bind(this, 'upvote')} disabled={this.didVote('up')} />
-                <Icon link name='arrow down' size='large' onClick={this.vote.bind(this, 'downvote')} disabled={this.didVote('down')} />
+                {this.props.deletion ?
+                    <Checkbox onChange={this.handleSelected.bind(this)} /> :
+                    <div>
+                        <Icon link={!this.didVote('up')} name='arrow up' size='large' disabled={this.didVote('up')} onClick={this.vote.bind(this, 'up')} />
+                        <Icon link={!this.didVote('down')} name='arrow down' size='large' disabled={this.didVote('down')} onClick={this.vote.bind(this, 'down')} />
+                    </div>
+                }
             </Item>
         )
     }

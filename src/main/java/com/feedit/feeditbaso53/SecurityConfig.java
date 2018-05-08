@@ -25,9 +25,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AppUserDetailsService userDetailsService;
 
-
-
-
     @Bean
     public DaoAuthenticationProvider authenticationProvider (){
         DaoAuthenticationProvider authProvider =
@@ -46,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure (HttpSecurity http) throws Exception{
         http
                 .authorizeRequests()
-                .antMatchers("/api/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/api/**").hasAuthority("ROLE_USER")
                 .and()
                 .formLogin()
                 .loginPage("/authenticate")

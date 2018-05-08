@@ -24,4 +24,6 @@ public class Users {
 
     private Boolean isadmin;
 
+    @OneToMany(targetEntity = Article.class, mappedBy = "usernameid")
+    private List<Article> articles;
 }

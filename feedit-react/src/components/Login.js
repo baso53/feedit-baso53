@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Route, Link, Redirect, withRouter } from 'react-router-dom';
-import { Button, Form, Grid, Header, Image, Message, Segment, Label } from 'semantic-ui-react'
+import { Redirect } from 'react-router-dom';
+import { Button, Form, Grid, Header, Segment, Label } from 'semantic-ui-react'
 import axios from 'axios';
 
 class Login extends Component {
@@ -13,13 +13,10 @@ class Login extends Component {
             redirect: false,
             wrongCredentials: false
         };
-
     }
 
-    validateForm() {
-        return this.state.username.length > 0 && this.state.password.length > 0;
-    }
-
+    validateForm = () => this.state.username.length > 0 && this.state.password.length > 0;
+    
     handleChange = (event, { name, value }) => this.setState({ [name]: value });
 
     handleSignIn(event) {
@@ -70,7 +67,7 @@ class Login extends Component {
                     verticalAlign='middle'
                 >
                     <Grid.Column style={{ maxWidth: 450 }}>
-                        <Header as='h2' color='teal' textAlign='center'>
+                        <Header as='h1' color='teal' textAlign='center'>
                             Feedit
                         </Header>
                         <Form size='large' onSubmit={this.handleSignIn.bind(this)}>

@@ -1,12 +1,7 @@
 package com.feedit.feeditbaso53;
 
-import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import lombok.Generated;
 import lombok.ToString;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
@@ -20,7 +15,6 @@ public class Article {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore()
     private Long articleid;
 
     @Column(insertable = false)
@@ -38,6 +32,5 @@ public class Article {
     @Column(insertable = false)
     private Integer votes;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Integer usernameid;
+    private Long usernameid;
 }

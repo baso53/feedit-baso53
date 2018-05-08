@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Route, Link, Redirect } from 'react-router-dom';
-import { Item, Container, Button, Dropdown, Input } from 'semantic-ui-react';
+import { Item, Container, Dropdown, Input, Label } from 'semantic-ui-react';
 import Pagination from './Pagination';
 import axios from 'axios';
 import Article from './Article';
@@ -13,7 +12,7 @@ class ArticleList extends Component {
             articles: [],
             redirect: '',
             sort: 'votes',
-            desc: false,
+            desc: true,
             page: {
                 "size": 10,
                 "totalElements": 0,
@@ -39,7 +38,7 @@ class ArticleList extends Component {
         {
             key: 'author',
             value: 'author',
-            text: 'Autor'
+            text: 'Author'
         }
     ]
 
@@ -56,6 +55,7 @@ class ArticleList extends Component {
                     articles: response.data._embedded.articles,
                     page: response.data.page
                 });
+
             }).catch(error => {
                 //todo
             });
@@ -79,16 +79,16 @@ class ArticleList extends Component {
             });
     }
 
-    changePagePrevious(){
-        if (this.state.page.number > 0){
+    changePagePrevious() {
+        if (this.state.page.number > 0) {
             this.getArticlesVanilla(-1);
         }
     }
 
     changePageNext() {
-         if (this.state.page.number + 1 < this.state.page.totalPages){
-             this.getArticlesVanilla(1);
-         }
+        if (this.state.page.number + 1 < this.state.page.totalPages) {
+            this.getArticlesVanilla(1);
+        }
     }
 
     renderChildrenForArticle(articles) {
@@ -100,6 +100,8 @@ class ArticleList extends Component {
                     author={article.author}
                     votes={article.votes}
                     voted={article.voted}
+                    articleid={/[^/]*$/.exec(article._links.self.href)[0]}
+                    getArticlesVanilla={this.getArticlesVanilla.bind(this)}
                 />
             )
         })
@@ -146,8 +148,6 @@ class ArticleList extends Component {
     }
 
     render() {
-        console.log(this.state)
-
         return (
             <Container>
                 <Dropdown
@@ -156,11 +156,24 @@ class ArticleList extends Component {
                     style={{ marginBottom: '1em' }}
                     onChange={this.handleSort.bind(this)}
                 />
+                
                 <Input onChange={this.handleSearch.bind(this)} fluid style={{ marginBottom: '2em' }} placeholder='Search articles' />
-                <Item.Group>{this.renderChildrenForArticle(this.state.articles)}</Item.Group>
-                <Pagination 
-                    page={this.state.page} 
-                    changePagePrevious={this.changePagePrevious.bind(this)} 
+
+                {this.state.articles.length === 0
+                    ? <Label
+                        basic
+                        color='red'
+                        horizontal
+                        style={{ marginBottom: '1em' }}>
+                        Trenutno nema članaka za prikaz
+                    </Label>
+                    : null}
+
+                {this.state.articles.length !==0 ? <Item.Group>{this.renderChildrenForArticle(this.state.articles)}</Item.Group> : null }
+
+                <Pagination
+                    page={this.state.page}
+                    changePagePrevious={this.changePagePrevious.bind(this)}
                     changePageNext={this.changePageNext.bind(this)}
                     changePageSize={this.changePageSize.bind(this)}
                 />
